@@ -1,5 +1,5 @@
 function log (message) {
-  process.stdout.write(message + '\n')
+  //process.stdout.write(message + '\n')
 }
 
 describe('Outer describe', () => {

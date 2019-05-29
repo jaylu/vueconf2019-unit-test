@@ -3,15 +3,6 @@ import MessageRow from '@/components/message/list/row/MessageRow'
 import { mergeWith } from 'lodash'
 
 describe('MessageRow.vue', () => {
-  it('should render sender', () => {
-    const wrapper = shallowMount(MessageRow, {
-      propsData: {
-        sender: 'Jay'
-      }
-    })
-    expect(wrapper.text()).toContain('Jay')
-  })
-
   function createWrapper (overrides) {
     const defaultOptions = {
       propsData: {
@@ -25,20 +16,6 @@ describe('MessageRow.vue', () => {
       MessageRow,
       mergeWith(defaultOptions, overrides))
   }
-
-  it('should render given props', () => {
-    const wrapper = shallowMount(MessageRow, {
-      propsData: {
-        sender: 'Jay',
-        message: 'Hello',
-        time: new Date(2019, 4, 7, 9, 0)
-      }
-    })
-
-    expect(wrapper.text()).toContain('Jay')
-    expect(wrapper.text()).toContain('Hello')
-    expect(wrapper.text()).toContain('2019-05-07 09:00')
-  })
 
   describe(':props', () => {
     it(':sender - should render sender', () => {
@@ -66,15 +43,6 @@ describe('MessageRow.vue', () => {
         }
       })
       expect(wrapper.text()).toContain('2019-05-07 09:00')
-    })
-
-    it('should render sender', () => {
-      const wrapper = shallowMount(MessageRow, {
-        propsData: {
-          sender: 'Jay'
-        }
-      })
-      expect(wrapper.text()).toContain('Jay')
     })
   })
 })
