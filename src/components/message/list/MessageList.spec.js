@@ -4,32 +4,6 @@ import { mergeWith } from 'lodash'
 import { shallowMount } from '@vue/test-utils'
 
 describe('MessageList.vue', () => {
-  it('should render rows in time desc order', () => {
-    const dateEarlier = new Date(2019, 4, 7, 9)
-    const dateLater = new Date(2019, 4, 7, 10)
-
-    const wrapper = shallowMount(
-      MessageList,
-      {
-        propsData: {
-          data: [
-            { time: dateEarlier, sender: 'Ken', message: 'You looks good today' },
-            { time: dateLater, sender: 'Jay', message: 'Only today ?' }
-          ]
-        }
-      })
-
-    const allMessageRows = wrapper.findAll(MessageRow)
-    expect(allMessageRows.length).toEqual(2)
-
-    expect(allMessageRows.at(0).props('time')).toEqual(dateLater)
-    expect(allMessageRows.at(0).props('sender')).toEqual('Jay')
-    expect(allMessageRows.at(0).props('message')).toEqual('Only today ?')
-
-    expect(allMessageRows.at(1).props('time')).toEqual(dateEarlier)
-    expect(allMessageRows.at(1).props('sender')).toEqual('Ken')
-    expect(allMessageRows.at(1).props('message')).toEqual('You looks good today')
-  })
 
   function createWrapper (overrides) {
     const defaultOptions = {
@@ -61,36 +35,22 @@ describe('MessageList.vue', () => {
     })
 
     it(':message - should render data list in time desc order', () => {
-      const dateEarlier = new Date('Tue May 07 2019 09:00:43 GMT+0800 (China Standard Time)')
-      const dateLater = new Date('Tue May 07 2019 09:00:44 GMT+0800 (China Standard Time)')
+      const dateEarlier = new Date(2019, 4, 7, 9)
+      const dateLater = new Date(2019, 4, 7, 10)
 
-      const wrapper = createWrapper({
-        propsData: {
-          data: [
-            {
-              sender: 'Ken',
-              time: dateEarlier,
-              message: 'You looks good today'
-            },
-            {
-              sender: 'Jay',
-              time: dateLater,
-              message: 'Only today ?'
-            }
-          ]
-        }
-      })
+      const wrapper = shallowMount(
+        MessageList,
+        {
+          propsData: {
+            data: [
+              { time: dateEarlier, sender: 'Ken', message: 'You looks good today' },
+              { time: dateLater, sender: 'Jay', message: 'Only today ?' }
+            ]
+          }
+        })
 
       const allMessageRows = wrapper.findAll(MessageRow)
       expect(allMessageRows.length).toEqual(2)
-
-      expect(allMessageRows.at(0).props('sender')).toEqual('Jay')
-      expect(allMessageRows.at(0).props('time')).toEqual(dateLater)
-      expect(allMessageRows.at(0).props('message')).toEqual('Only today ?')
-
-      expect(allMessageRows.at(1).props('sender')).toEqual('Ken')
-      expect(allMessageRows.at(1).props('time')).toEqual(dateEarlier)
-      expect(allMessageRows.at(1).props('message')).toEqual('You looks good today')
 
       expect(allMessageRows.at(0)).toSatisfy(
         aMessageRowWith(dateLater, 'Jay', 'Only today ?'))

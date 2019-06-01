@@ -11,6 +11,10 @@ jest.mock('@/services/apis/message/message-api', () => ({
   getAllMessages: jest.fn()
 }))
 
+let messageFromJay = { 'message': 'Hello', 'sender': 'Jay ', 'time': '2019-05-18T14:42:18.796Z' }
+let messageFromKen = { 'message': 'hi', 'sender': 'Ken', 'time': '2019-05-18T14:42:25.100Z' }
+let requestPayload = { 'message': '   Hello', 'sender': 'Jay' }
+
 describe('MessageView.vue', () => {
   function createWrapper (overrides) {
     const defaultOptions = {
@@ -27,60 +31,47 @@ describe('MessageView.vue', () => {
     postMessage.mockClear()
   })
 
-  it('can handle user submit', async () => {
-    let messageFromJay = { 'message': 'Hello', 'sender': 'Jay ', 'time': '2019-05-18T14:42:18.796Z' }
-    let messageFromKen = { 'message': 'hi', 'sender': 'Ken', 'time': '2019-05-18T14:42:25.100Z' }
-    let requestPayload = { 'message': '   Hello', 'sender': 'Jay' }
+  describe('(user-interaction)', () => {
+    it('can handle user submit', async () => {
+      // noinspection JSCheckFunctionSignatures
+      getAllMessages.mockResolvedValue({ data: [messageFromJay, messageFromKen] })
 
-    // noinspection JSCheckFunctionSignatures
-    getAllMessages.mockResolvedValue({ data: [messageFromJay, messageFromKen] })
+      // noinspection JSCheckFunctionSignatures
+      postMessage.mockResolvedValueOnce({})
 
-    // noinspection JSCheckFunctionSignatures
-    postMessage.mockResolvedValueOnce({})
+      let wrapper = shallowMount(MessageView)
 
-    let wrapper = shallowMount(MessageView)
+      wrapper.find(MessageInput).vm.$emit('submit', requestPayload)
 
-    wrapper.find(MessageInput).vm.$emit('submit', requestPayload)
+      await flushPromises()
 
-    await flushPromises()
+      expect(postMessage).toHaveBeenCalledTimes(1)
+      expect(postMessage).toHaveBeenCalledWith(requestPayload)
+      expect(getAllMessages).toHaveBeenCalledTimes(2)
 
-    expect(postMessage).toHaveBeenCalledTimes(1)
-    expect(postMessage).toHaveBeenCalledWith(requestPayload)
-    expect(getAllMessages).toHaveBeenCalledTimes(2)
-
-    expect(wrapper.find(MessageList).props('data')).toMatchObject([
-      { 'message': 'Hello', 'sender': 'Jay ', 'time': new Date('2019-05-18T14:42:18.796Z') },
-      { 'message': 'hi', 'sender': 'Ken', 'time': new Date('2019-05-18T14:42:25.100Z') }
-    ])
+      expect(wrapper.find(MessageList).props('data')).toMatchObject([
+        { 'message': 'Hello', 'sender': 'Jay ', 'time': new Date('2019-05-18T14:42:18.796Z') },
+        { 'message': 'hi', 'sender': 'Ken', 'time': new Date('2019-05-18T14:42:25.100Z') }
+      ])
+    })
   })
 
-  it('should call api to send message and reload after user clicking submit button', async () => {
-    let messageFromJay = { 'message': 'Hello', 'sender': 'Jay ', 'time': '2019-05-18T14:42:18.796Z' }
-    let messageFromKen = { 'message': 'hi', 'sender': 'Ken', 'time': '2019-05-18T14:42:25.100Z' }
-    let requestPayload = { 'message': 'Hello', 'sender': 'Jay' }
+  describe('(life-cycle)', () => {
+    it('created - should reload on created', async () => {
+      // noinspection JSCheckFunctionSignatures
+      getAllMessages
+        .mockResolvedValueOnce({ data: [messageFromJay, messageFromKen] })
 
-    // noinspection JSCheckFunctionSignatures
-    getAllMessages
-      .mockResolvedValueOnce({ data: [messageFromKen] })
-      .mockResolvedValueOnce({ data: [messageFromJay, messageFromKen] })
+      let wrapper = createWrapper()
 
-    // noinspection JSCheckFunctionSignatures
-    postMessage
-      .mockResolvedValueOnce({})
+      await flushPromises()
 
-    let wrapper = createWrapper()
+      expect(getAllMessages).toHaveBeenCalledTimes(1)
 
-    wrapper.find(MessageInput).vm.$emit('submit', requestPayload)
-
-    await flushPromises()
-
-    expect(postMessage).toHaveBeenCalledTimes(1)
-    expect(postMessage).toHaveBeenCalledWith(requestPayload)
-    expect(getAllMessages).toHaveBeenCalledTimes(2)
-
-    expect(wrapper.find(MessageList).props('data')).toMatchObject([
-      { 'message': 'Hello', 'sender': 'Jay ', 'time': new Date('2019-05-18T14:42:18.796Z') },
-      { 'message': 'hi', 'sender': 'Ken', 'time': new Date('2019-05-18T14:42:25.100Z') }
-    ])
+      expect(wrapper.find(MessageList).props('data')).toMatchObject([
+        { 'message': 'Hello', 'sender': 'Jay ', 'time': new Date('2019-05-18T14:42:18.796Z') },
+        { 'message': 'hi', 'sender': 'Ken', 'time': new Date('2019-05-18T14:42:25.100Z') }
+      ])
+    })
   })
 })

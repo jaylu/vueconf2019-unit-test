@@ -17,9 +17,18 @@ import { format } from 'date-fns'
 export default {
   name: 'MessageRow',
   props: {
-    sender: String,
-    time: Date,
-    message: String
+    sender: {
+      type: String,
+      default: null
+    },
+    time: {
+      type: Date,
+      default: null
+    },
+    message: {
+      type: String,
+      default: null
+    }
   },
   filters: {
     displayTime (time) {
