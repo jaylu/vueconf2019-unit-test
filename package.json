@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "server": "cd server && node server.js",
+    "dev": "run-p server serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",
     "clean": "rm -rf ./dist",
-    "server": "cd server && node server.js",
     "docker:build": "npm run clean && npm run build && docker build -t vueconf2019-unit-test .",
     "docker:start": "docker run -d --name vueconf2019-unit-test -p 80:8099 vueconf2019-unit-test:latest",
-    "docker:stop": "docker stop vueconf2019-unit-test && docker rm vueconf2019-unit-test"
+    "docker:stop": "docker stop vueconf2019-unit-test && docker rm vueconf2019-unit-test",
+    "postinstall": "cd server && npm install"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -34,6 +36,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "flush-promises": "^1.0.2",
+    "npm-run-all": "^4.1.5",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-template-compiler": "^2.5.21"
